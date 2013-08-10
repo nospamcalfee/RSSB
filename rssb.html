@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+  <!--
+    Copyright 2013, Steve Calfee 
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    For the GNU General Public License see the Free Software Foundation,
+    Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-->
+  <head>
+    <meta content="text/html; charset=UTF-8" http-equiv="content-type">
+    <title>RSSB</title>
+    <meta name="description" content="Virtual RSSB, An emulator for the 64-bit RSSB MPU in JavaScript">
+    <script language="JavaScript" type="text/javascript" src="long.js"></script>
+    <script language="JavaScript" type="text/javascript" src="RSSBasm.js"></script>
+    <script language="JavaScript" type="text/javascript" src="RSSBprogram.js"></script>
+    <script language="JavaScript" type="text/javascript" src="RSSBemulator.js"></script>
+    <script language="JavaScript" type="text/javascript" src="RSSBgui.js"></script>
+    <style type="text/css">
+<!--
+.display {
+    font-family: courier,fixed,sans-serif;
+    font-size: 15px;
+    color: white;
+    table-layout: fixed;
+    width: 135px;
+}
+.display2 {
+    font-family: courier,fixed,sans-serif;
+    font-size: 12px;
+    color: black;
+}
+.regset,a.regset,a.regset:link,a.regset:visited {
+    font-family: courier,fixed,sans-serif;
+    font-size: 15px;
+    text-decoration: none;
+    color: #77dd11;
+}
+a.regset:hover {
+    text-decoration: underline;
+}
+a.regset:active {
+    text-decoration: underline;
+    color: #bb0000;
+}
+a.display2,a.display2:link,a.display2:visited,a.display2:hover {
+    font-family: courier,fixed,sans-serif;
+    font-size: 12px;
+    color: red;
+    text-decoration: none;
+}
+a.display2:active {
+    color: blue;
+}
+h1 {
+    font-family: arial,helvetica,sans-serif;
+    font-size: 32px;
+    color: black;
+    font-weight: normal;
+    letter-spacing: 2px;
+  background-image: url("images/goldback.jpg");
+}
+h1 small {
+    font-size: 24px;
+    letter-spacing: 2px;
+}
+h3 {
+    font-family: arial,helvetica,sans-serif;
+    font-size: 20px;
+    color: white;
+    font-weight: normal;
+    letter-spacing: 1px;
+}
+.text18 {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    line-height: 18px;
+    color: white;
+}
+.text {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 11px;
+    color: white;
+}
+.isButton {
+    font-family: courier,fixed,sans-serif;
+    font-size: 12px;
+    color: black;
+  display: block;
+  text-align: center;
+  width: 100px;
+}
+.formField {
+    font-family: courier,fixed,sans-serif;
+    font-size: 12px;
+    color: #dddddd;
+    background: #333333;
+}
+displayLr {
+    font-family: courier,fixed,sans-serif;
+    font-size: 15px;
+    color: white;
+    position: relative;
+}
+body {background-image:url("images/goldback.jpg");}
+      div.inputdata{
+border:thin solid gray;
+padding:0.1em;
+margin:0.1em;
+}
+
+    div.inputdata label{
+    float:left;
+    margin-right:10px;
+    padding:5px 0;
+    color:gray;
+    }
+
+    div.inputdata span{
+    display: block;
+    overflow: hidden;
+    }
+
+        div.inputdata input{
+        width:100%;
+        padding-top:8px;
+        border:none;
+        background:none;
+        }
+
+    .clear {
+    clear: both; 
+    }
+-->
+</style> </head>
+  <body style="width: 700px;">
+    <table style="width: 700px;" border="1">
+      <tbody>
+        <tr>
+          <td style="width: 50%;">
+            <h1 align="center"> virtual RSSB </h1>
+          </td>
+          <td><div align="center">
+          <img style="width: 97px; height: 68px;"  alt="zipper" src="images/zipper_vector_155205.jpg"
+        title="RSSB" > </div></td>
+        </tr>
+      </tbody>
+    </table>
+    <table border="0" cellpadding="0" cellspacing="0">
+      <tbody>
+        <tr>
+          <td bgcolor="#444444">
+            <table border="0" cellpadding="0" cellspacing="6" bgcolor="#444444">
+              <tbody>
+                <tr>
+                  <td class="display" align="center"><a href="javascript://" class="regset"
+                      onclick="setRegister('LOC'); return false" onfocus="if (this.blur) this.blur()"
+                      onmouseover="window.status='set LOC'; return true" onmouseout="window.status=''; return true"
+                      title="set LOC">LOC</a></td>
+                  <td class="display" align="center"><a href="javascript://" class="regset"
+                      onclick="setRegister('ADDR'); return false" onfocus="if (this.blur) this.blur()"
+                      onmouseover="window.status='set ADDR'; return true" onmouseout="window.status=''; return true"
+                      title="set ADDR">OPCODE==ADDR</a></td>
+                  <td class="display" align="center"><a href="javascript://" class="regset"
+                      onclick="setRegister('MEM'); return false" onfocus="if (this.blur) this.blur()"
+                      onmouseover="window.status='set MEM'; return true" onmouseout="window.status=''; return true"
+                      title="set MEM">MEM</a></td>
+                  <td class="display" align="center"><a href="javascript://" class="regset"
+                      onclick="setRegister('AC'); return false" onfocus="if (this.blur) this.blur()"
+                      onmouseover="window.status='set AC'; return true" onmouseout="window.status=''; return true"
+                      title="set AC">AC</a></td>
+                  <td class="display" align="center"><a href="javascript://" class="regset"
+                      onclick="setRegister('BORROW'); return false" onfocus="if (this.blur) this.blur()"
+                      onmouseover="window.status='set BORROW'; return true" onmouseout="window.status=''; return true"
+                      title="set BORROW">BORROW</a></td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        <tr>
+        </tr>
+      </tbody>
+    </table>
+    <div id="emulScroll" style=" height: 100px; overflow: auto;">
+      <table id="emul" border="0" cellpadding="0" cellspacing="6" bgcolor="#444444">
+        <tbody>
+          <tr>
+            <td class="display" align="center" nowrap="nowrap">
+              <div id="dispLOC" class="displayLr">0000</div>
+            </td>
+            <td class="display" align="center" nowrap="nowrap">
+              <div id="dispADDR" class="displayLr">00</div>
+            </td>
+            <td class="display" align="center" nowrap="nowrap">
+              <div id="dispMEM" class="displayLr">00</div>
+            </td>
+            <td class="display" align="center" nowrap="nowrap">
+              <div id="dispAC" class="displayLr">00</div>
+            </td>
+            <td class="display" align="center" nowrap="nowrap">
+              <div id="dispBORROW" class="displayLr">no</div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <table border="0" cellpadding="2" cellspacing="0">
+      <tbody>
+        <tr>
+          <td><input value="&nbsp;single step&nbsp;" class="isButton" onclick="singleStep()" type="button"></td>
+          <td><input value="      run      " class="isButton" onclick="run()" type="button"></td>
+          <td><input value="   run faster  " class="isButton" onclick="runFaster()" type="button"></td>
+          <td><input value="               " class="isButton" type="button"></td>
+          <td><input value="     break     " class="isButton" onclick="doBreak()" type="button"></td>
+          <td><input value="&nbsp;&nbsp;reset CPU&nbsp;&nbsp;" class="isButton"
+              onclick="masterReset()" type="button"></td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="dispCycles" class="displayLr">total cycles: 0</div>
+    <table border="0" cellpadding="0" cellspacing="7">
+      <form name="MemLoader" id="MemLoader" onsubmit="showMem();return false"></form>
+      <tbody>
+        <tr>
+          <td colspan="2"><textarea wrap="off" id="mem" class="formField" rows="16"
+              cols="96" wrap="virtual"></textarea></td>
+        </tr>
+      </tbody>
+    </table>
+    <form> show ASCII on/off <input id="showASCII" value="1" type="checkbox"></form>
+    <form> start address (hex) : <input id="memAddr" name="memAddr"
+        style="text-align:right" value="0040" type="text">
+        <input style="display:inline" value="show memory" class="isButton" onclick="showMem()" type="button">
+    </form> 
+<br><br><br><br>EXPERIMENT AREA<br>
+    <center> Click on below table cell to find its value. <br>
+      <br>
+    </center>
+    <table id="tblMain" style="cursor: pointer;" border="1" align="center">
+      <tbody>
+        <tr>
+          <td> R1C1 </td>
+          <td> R1C2 </td>
+          <td> R1C3 </td>
+          <td> R1C4 </td>
+        </tr>
+        <tr>
+          <td> R2C1 </td>
+          <td> R2C2 </td>
+          <td> R2C3 </td>
+          <td> R2C4 </td>
+        </tr>
+        <tr>
+          <td> R3C1 </td>
+          <td> R3C2 </td>
+          <td> R3C3 </td>
+          <td> R3C4 </td>
+        </tr>
+        <tr>
+          <td> R4C1 </td>
+          <td> R4C2 </td>
+          <td> R4C3 </td>
+          <td> R4C4 </td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+    <script language="javascript" type="text/javascript">
+        var tbl = document.getElementById("tblMain");
+        if (tbl != null) {
+            for (var i = 0; i < tbl.rows.length; i++) {
+                for (var j = 0; j < tbl.rows[i].cells.length; j++)
+                    tbl.rows[i].cells[j].onclick = function () { getval(this); };
+            }
+        }
+        function getval(cel) {
+            alert(cel.innerHTML);
+        }
+    </script>
+</body>
+</html>
