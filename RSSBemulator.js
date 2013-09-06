@@ -63,7 +63,11 @@ function store(addr, value) {
     if (addr.equals(PC_LOCATION)) {
         pc = value;
     } else {
-        memory[addr] = {value : value, comment : "created"};
+        if (addr in memory) {
+            memory[addr] = {value : value, comment : memory[addr].comment };
+        } else {
+            memory[addr] = {value : value, comment : "stored" };
+        }
     }
 }
 
