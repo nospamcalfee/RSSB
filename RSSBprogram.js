@@ -17,11 +17,12 @@ p.vary("temp",  Long.fromBits(0xbeef>>>0,0xc0de>>>0),"temp");
 p.macros.clr(p.lit(Long.fromBits(0xdead>>>0, 0), "clear literal, questionable"));
 p.macros.clr(p.lit(Long.fromBits(0xdead>>>0, 0), "verify duplicate literals are reused"));
 
-p.label("loop_top");
 p.macros.mov("movsrc", "fred","test move into fred");
 p.macros.neg("fred", "temp", "negate fred");
-p.macros.mov( p.lit(Long.fromBits(0, 1), "x"), "temp","test move");
+p.macros.mov( p.lit(Long.fromBits(1, 0), "x"), "temp","test move");
 p.macros.sub(p.lit(Long.fromBits(1, 0), "x"), "temp", "temp - 1");
-p.macros.sub(p.lit(Long.fromBits(1, 0), "y"), "temp", "temp - 1");
+/*p.macros.sub(p.lit(Long.fromBits(1, 0), "y"), "temp", "temp - 1");*/
+p.label("loop_top");
+p.macros.add(p.lit(Long.fromBits(1, 0), "z"), "temp");
 p.macros.jmp("loop_top");
 

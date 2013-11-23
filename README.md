@@ -58,14 +58,17 @@ To use, checkout the git tree: Then load the rssb.html file in your browser
 on your local machine.  Press buttons and see what it does.
 
 TO DO:
-finish expanding the assembler. Right now only clr, mov and jmp. are defined.
-Some new instructions are simple, neg, sub, add...
+finish expanding the assembler. Right now only clr, mov, neg, sub, add and jmp
+are defined.
+
 Others require self modifying code movi (move indirect), and, xor etc.
 
 Test and do assembler instruction for the bit shifted operations.
 
 Work on the user interface. Borrow actually means the previous instruction
 borrowed and skipped to this instruction. Not too intuitive.
+
+I also really need a memory watch window.
 
 Write a true assembler with a reasonable syntax. Then allow a user to paste
 a file into the gui, have the code assembled and ready to run. It would be
@@ -75,7 +78,7 @@ website instead of locally.
 
 BACKGROUND INFO
 
-Inspiration on why do a mechanical computer came from a friend of mine is a
+Inspiration on why do a mechanical computer came from a friend of mine who is a
 docent at the Computer History Museum in Mountain View, Ca. He gives a
 great demo on a Babbage Difference Engine II
 

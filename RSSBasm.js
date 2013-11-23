@@ -54,7 +54,7 @@ function program(codeaddr, litpool, varpool) {
                 this.symbols[symname].forward.push(locneeded);
             }
         }
-        return None;
+        return null;
     };
     program.prototype.vary = function(name, b, c) {
             if (!(name in this.symbols)) {
@@ -141,17 +141,18 @@ function program(codeaddr, litpool, varpool) {
             }
         },
         neg : function(src, result, comment) {
-            comment = typeof comment == 'undefined' ? "" : comment;
+            /* result = -src */
+            comment = typeof comment == 'undefined' ? "" : "neg " + comment;
             var res = that.getaddr(result);
             that.macros.clr(result, comment + " clear acc and tmp");
-            var offs = that.sym(src);
+            var offs = that.getaddr(src);
             that.emit(offs, comment + " acc, src == src (wont skip)");
             that.emit(res, comment + " (will skip, unless 0)");
             that.emit(res, comment + " (acc==0 still 0)");
         },
         sub : function(src, result, comment) {
             /* result = result - src */
-            comment = typeof comment == 'undefined' ? "sub " + result + " - " + src : comment;
+            comment = typeof comment == 'undefined' ? "sub " + result + " - " + src : "sub " + comment;
             that.vary("subtmp", Long.fromBits(0xbeef>>>0, 0), "subtmp");
             var tad = that.sym("subtmp", that.VAR, that.LOC);
             var sad = that.getaddr(src);
@@ -160,16 +161,16 @@ function program(codeaddr, litpool, varpool) {
             that.emit(sad, comment + " acc, sad == sad wont skip");
             that.emit(rad, comment + " acc, result == result-sad may skip");
             that.macros.clr(tad, comment + " ignore all possible skips");
-        }
-        /*,
+        },
         add : function(src, result, comment) {
+            /* result = result + src */
             comment = typeof comment == 'undefined' ? "add " + result + " + " + src : comment;
             that.vary("addtmp", Long.fromBits(0xbeef>>>0, 0), "addtmp");
             var tad = that.sym("addtmp", that.VAR, that.LOC);
             var sad = that.getaddr(src);
             that.macros.neg(sad, tad, comment);
-            that.macros.sub(result, tad, comment);
+            that.macros.sub(tad, result, comment);
         },
-*/
+
     };
 }
